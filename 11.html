@@ -210,13 +210,19 @@ steps = ASQ()
 
 	if (caller) {
 		console.log("CALLER!!");
-
-		// ASQ here
+		ASQ(getMediaStream)
+		.seq(sendOffer)
+		.then(getRemoteSDP)
+		.pipe(done);
 	}
 	else {
 		console.log("RECEIVER!!");
-
-		// ASQ here
+		ASQ()
+		.gate(
+			getMediaStream,
+			getRemoteSDP
+		).then(sendAnswer)
+		.pipe(done);
 	}
 })
 .val(function(){

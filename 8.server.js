@@ -25,11 +25,16 @@ function returnRandom() {
 }
 
 function handleIO(socket){
-  function disconect(){
+  function disconnect(){
+    clearInterval(intv);
     console.log("client disconnected");
   }
   console.log("client connected");
   socket.on("disconnect", disconnect);
+
+  var intv = setInterval(function(){
+    socket.emit("hello", Math.random());
+  },1000);
 
 }
 
@@ -43,7 +48,19 @@ var node_static = require("node-static");
 //we want to serve our static files from the directory this program is in:
 var static_files = new node_static.Server(__dirname);
 
-var io = require("socket.io");
 
-io.listen(http_server);
+var io = require("socket.io").listen(http_server);
+
+// configure socket.io
+io.configure(function(){
+	io.enable("browser client minification"); // send minified client
+	io.enable("browser client etag"); // apply etag caching logic based on version number
+	io.set("log level", 1); // reduce logging
+	io.set("transports", [
+		"websocket",
+		"xhr-polling",
+		"jsonp-polling"
+	]);
+});
+
 io.on("connection", handleIO);

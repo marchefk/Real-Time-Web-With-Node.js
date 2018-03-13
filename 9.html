@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>9.html</title>
+  </head>
+  <body>
+    <h1>9.html</h1>
+    <p id="myPar"></p>
+    <input type="text" id="myInput"></input>
+    <button id="sButton">Sumbit</button>
+    <div id="myDiv"></div>
+
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+    var socket = io.connect("/");
+
+    function submitInput(){
+      var myInput = document.getElementById('myInput').value;
+      if (myInput){
+        socket.emit("submit", myInput);
+    }
+      document.getElementById('myDiv').innerHTML += myInput + "<br>";
+      document.getElementById('myInput').value = "";
+    }
+
+    socket.on("connect", function(){
+      console.log("connected");
+    });
+
+    socket.on("disconnect", function(){
+      console.log("disconnected");
+    });
+
+    socket.on("message", function(input){
+      document.getElementById('myDiv').innerHTML += input + "<br>";
+    })
+
+    var myPar = document.getElementById('myPar');
+    socket.on("hello", function(data){
+      myPar.innerHTML = "Hello world " + data;
+    });
+
+    var sButton = document.getElementById('sButton');
+    sButton.addEventListener("click", submitInput, false);
+
+    </script>
+  </body>
+</html>

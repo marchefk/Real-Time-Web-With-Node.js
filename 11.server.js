@@ -50,6 +50,10 @@ function connection(socket) {
 
 	socket.on("disconnect",disconnect);
 
+	socket.on("signal", function(msg){
+		socket.broadcast.emit(msg);
+	})
+
 	// is there a channel waiting for a socket to join it?
 	if (
 		channels.length > 0 &&
